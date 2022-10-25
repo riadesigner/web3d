@@ -1,0 +1,26 @@
+html,body{
+	padding:0;
+	margin: 0;
+	height: 100%;
+}
+*{box-sizing: border-box;}
+
+body{
+	background: #333333;
+	color:lightgray;
+	font: 1rem arial;
+}
+
+#scene3d{
+	width: 1000px;
+	height: 400px;
+	position: absolute;
+	top:45%;left:50%;
+	transform: translate(-50%,-50%);
+	background: #777777;
+}
+
+#status-bar{
+	position: absolute;text-align: center;width: 100%;	
+	bottom:10px;left:0;font:.9rem arial;color:lightgray;
+}
