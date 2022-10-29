@@ -27,7 +27,7 @@ var Maket = {
 		this.build_light_ambient();
 		this.build_the_floor();
 		
-		this.build_cubes();		
+		this.build_cubes({onReady:()=>{ this.if_all_ready(); }});		
 
 		this.behavior();
 		this.animate();		
@@ -82,11 +82,32 @@ var Maket = {
 			cube.position.set(posX-fied_size/2,0,posY-fied_size/2);			
 		}			
 	},
-
-	build_cubes:function() {
+	build_one_cube:function(size) {
 		
-		var texture = new THREE.TextureLoader().load( 'i/cube-01_.png' );			
-		var  material = new THREE.MeshBasicMaterial( { map: texture } );
+		var textures = []; 		
+
+		for(var i=0;i<6;i++){
+			textures[i] = new THREE.TextureLoader().load( 'i/cube-0'+(i+1)+'_.png' );
+		}
+
+		var materials = []; 
+		
+		for(var i=0;i<6;i++){
+			materials[i] = new THREE.MeshBasicMaterial({ map: textures[i] });
+		}
+
+		var geometry = new THREE.BoxGeometry( size, size, size );		
+		var cube = new THREE.Mesh( geometry, materials );
+			
+		this.ARR_CUBES.push(cube);
+		cube.castShadow = true; 								
+		this.scene.add( cube );
+
+
+	},
+	build_cubes:function(opt) {
+		
+
 
 		var arr = Array.from(Array(10).keys());
 
@@ -97,16 +118,15 @@ var Maket = {
 			var g = Math.floor(Math.random()*254);
 			var b = Math.floor(Math.random()*254);
 			var color = new THREE.Color("rgb("+r+", "+g+", "+b+")");
-			var geometry = new THREE.BoxGeometry( size, size, size );
-						
-			var cube = new THREE.Mesh( geometry, material );
-			this.ARR_CUBES.push(cube);			
-			cube.castShadow = true; 						
-			this.scene.add( cube );
+			
+			this.build_one_cube(size);
 		}
+
 		this.shuffle_cubes_pos();		
 		this.ALL_CUBES_READY = true;
-		this.if_all_ready();
+
+		opt&opt.onReady();
+
 	},
 	build_the_floor:function() {
 		var geometry = new THREE.BoxGeometry( 3, .2, 3 );
@@ -136,7 +156,7 @@ var Maket = {
 			this.ARR_CUBES[i].rotation.z+=0.01;			
 		}
 		// this.cube.rotation.y += 0.01;
-		// this.cube.rotation.x += 0.01;	
+		// this.cube.rotation.x += 0.01;
 		// this.camera.rotation.z += -0.01;	
 		
 		this.renderer.render( this.scene, this.camera );
