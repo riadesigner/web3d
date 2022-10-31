@@ -47,9 +47,9 @@ var Maket = {
 	},
 	behavior:function() {
 		var _this=this;
+		
 		this.raycaster = new THREE.Raycaster();
 		this.pointer = new THREE.Vector2();
-
 		window.addEventListener( 'pointermove', function(event){ _this.onPointerMove(event); } );
 
 		document.addEventListener('keyup',(e)=>{						
@@ -151,10 +151,8 @@ var Maket = {
 		// this.cube.rotation.y += 0.01;
 		// this.cube.rotation.x += 0.01;	
 		// this.camera.rotation.z += -0.01;	
-
-		// update the picking ray with the camera and pointer position
-		this.raycaster.setFromCamera( this.pointer, this.camera );
-		// calculate objects intersecting the picking ray
+		
+		this.raycaster.setFromCamera( this.pointer, this.camera );		
 		var intersects = this.raycaster.intersectObjects( this.scene.children );		
 		for ( let i = 0; i < intersects.length; i ++ ) {
 			intersects[ i ].object.material.color.set( 0xff0000 );
