@@ -1,7 +1,7 @@
 
 
 var Maket = {
-	init:function(target) {
+	init:function(target,brands) {
 
 
 		this.$parent = $('#'+target);		
@@ -13,9 +13,13 @@ var Maket = {
 			lightIntensity:.6,		
 		};
 
-		this.ALL_READY = false;
-		this.ALL_CUBES_READY = false;
+		this.ALL_BRANDS = brands;
+		this.ALL_ARTS = {};		
 
+		this.ALL_READY = false;
+		this.ALL_ARTS_READY = false;
+
+		
 		this.ARR_CUBES = [];
 
 		this.build_scene();	
@@ -26,35 +30,30 @@ var Maket = {
 		this.build_light();
 		this.build_light_ambient();
 		this.build_the_floor();
-		
-		this.build_cubes();
+
+		this.build_art_models({onReady:()=>{
+			this.ALL_ARTS_READY = true;
+			this.shuffle_arts();
+			this.if_all_ready();			
+		}});
 
 		this.behavior();
 		this.animate();		
 
 	},
 	if_all_ready:function() {
-		if(this.ALL_CUBES_READY){
+		if(this.ALL_ARTS_READY){
 			this.ALL_READY = true;		
 		}
 	},
-	onPointerMove:function(event){
-		// calculate pointer position in normalized device coordinates
-		// (-1 to +1) for both components
-		this.pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-		this.pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-		console.log(this.pointer.x,this.pointer.y);
-	},
+
 	behavior:function() {
 		var _this=this;
 		
-		this.raycaster = new THREE.Raycaster();
-		this.pointer = new THREE.Vector2();
-		window.addEventListener( 'pointermove', function(event){ _this.onPointerMove(event); } );
 
 		document.addEventListener('keyup',(e)=>{						
 			if (e.key == " " || e.code == "Space" || e.keyCode == 32 ) {
-				this.ALL_READY && this.shuffle_cubes_pos();
+				this.ALL_READY && this.shuffle_arts();
 			}			
 		});		 
 
@@ -87,39 +86,48 @@ var Maket = {
 		this.controls.minDistance = 1;
 		this.controls.maxDistance = 5;
 	},
-	shuffle_cubes_pos:function() {
+	shuffle_arts:function() {
 		var fied_size = 6;
-		for(var i in this.ARR_CUBES){
+
+		for(var i in this.ALL_ARTS){
+			var art = this.ALL_ARTS[i].art;
 			var posX = Math.random()*fied_size;
 			var posY = Math.random()*fied_size;
-			var cube = this.ARR_CUBES[i];			
-			cube.position.set(posX-fied_size/2,0,posY-fied_size/2);			
+			// var cube = this.ARR_CUBES[i];			
+			art.position.set(posX-fied_size/2,0,posY-fied_size/2);			
 		}			
 	},
-	build_cubes:function() {
-		
+
+	build_one_cube:function(size,material,pos) {
+		var geometry = new THREE.BoxGeometry( size, size, size );
+		var cube = new THREE.Mesh( geometry, material );		
+		cube.castShadow = true; 								
+		cube.position.set(pos[0],pos[1],pos[2]);
+		return cube;
+	},
+	build_one_art:function(name,params) {
+		var size =  Math.random()*.4+.2;
 		var texture = new THREE.TextureLoader().load( 'i/cube-01_.png' );			
-		var  material = new THREE.MeshBasicMaterial( { map: texture } );
+		var material = new THREE.MeshBasicMaterial( { map: texture } );
+		
+		var cube1 = this.build_one_cube(size,material,[0,0,0]);		
+		var cube2 = this.build_one_cube(size,material,[0,size*1.2,0]);
 
-		var arr = Array.from(Array(10).keys());
+		var artGroup = new THREE.Group();
+		artGroup.add( cube1 );
+		artGroup.add( cube2 );
+		this.scene.add( artGroup );
+		this.ALL_ARTS[artGroup['uuid']] = {name:"name-1",art:artGroup};
 
+	},
+	build_art_models:function(opt) {		
+		var arr = this.ALL_BRANDS;
 		for(var i in arr){
-			var fied_size = 6;
-			var size =  Math.random()*.4+.2;						
-			var r = Math.floor(Math.random()*254);
-			var g = Math.floor(Math.random()*254);
-			var b = Math.floor(Math.random()*254);
-			var color = new THREE.Color("rgb("+r+", "+g+", "+b+")");
-			var geometry = new THREE.BoxGeometry( size, size, size );
-						
-			var cube = new THREE.Mesh( geometry, material );
-			this.ARR_CUBES.push(cube);			
-			cube.castShadow = true; 						
-			this.scene.add( cube );
+			var name = arr[i].name;
+			var params = {};
+			this.build_one_art(name,params);
 		}
-		this.shuffle_cubes_pos();		
-		this.ALL_CUBES_READY = true;
-		this.if_all_ready();
+		opt && opt.onReady();
 	},
 	build_the_floor:function() {
 		var geometry = new THREE.BoxGeometry( 3, .2, 3 );
@@ -151,12 +159,6 @@ var Maket = {
 		// this.cube.rotation.y += 0.01;
 		// this.cube.rotation.x += 0.01;	
 		// this.camera.rotation.z += -0.01;	
-		
-		this.raycaster.setFromCamera( this.pointer, this.camera );		
-		var intersects = this.raycaster.intersectObjects( this.scene.children );		
-		for ( let i = 0; i < intersects.length; i ++ ) {
-			intersects[ i ].object.material.color.set( 0xff0000 );
-		}
 
 
 		this.renderer.render( this.scene, this.camera );
@@ -168,8 +170,19 @@ var Maket = {
 };
 
 
+var CFG = {
+	brands:[
+			{name:'LEVIS'},
+			{name:'PRADA'},
+			{name:'GUCCI'},
+			{name:'ARMANI'},
+			{name:'VERSACE'},
+		]
+};
+
 $(function(){
 
-	Maket.init('scene3d');	
+
+	Maket.init('scene3d',CFG.brands);	
 
 });
