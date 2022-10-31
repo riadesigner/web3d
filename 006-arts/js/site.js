@@ -87,35 +87,43 @@ var Maket = {
 		this.controls.maxDistance = 5;
 	},
 	shuffle_arts:function() {
-		var fied_size = 6;
+		var fied_size = 10;
 
 		for(var i in this.ALL_ARTS){
 			var art = this.ALL_ARTS[i].art;
 			var posX = Math.random()*fied_size;
 			var posY = Math.random()*fied_size;
-			// var cube = this.ARR_CUBES[i];			
 			art.position.set(posX-fied_size/2,0,posY-fied_size/2);			
 		}			
 	},
 
-	build_one_cube:function(size,material,pos) {
+	build_one_cube:function(size,material,pos,ang) {
 		var geometry = new THREE.BoxGeometry( size, size, size );
 		var cube = new THREE.Mesh( geometry, material );		
 		cube.castShadow = true; 								
 		cube.position.set(pos[0],pos[1],pos[2]);
+		cube.rotation.set(ang[0],ang[1],ang[2]);
 		return cube;
 	},
 	build_one_art:function(name,params) {
-		var size =  Math.random()*.4+.2;
+		
 		var texture = new THREE.TextureLoader().load( 'i/cube-01_.png' );			
 		var material = new THREE.MeshBasicMaterial( { map: texture } );
 		
-		var cube1 = this.build_one_cube(size,material,[0,0,0]);		
-		var cube2 = this.build_one_cube(size,material,[0,size*1.2,0]);
-
 		var artGroup = new THREE.Group();
-		artGroup.add( cube1 );
-		artGroup.add( cube2 );
+		
+		for (var i=0; i<7; i++){
+			var size =  Math.random()*.4+.2;
+			var rX = Math.random()*size*1.5;
+			var rY = Math.random()*size*2.5;
+			var rZ = Math.random()*size*1.5;
+			var aX = Math.random()*360;
+			var aY = Math.random()*360;
+			var aZ = Math.random()*360;
+			var cube = this.build_one_cube(size,material,[rX,rY,rZ],[aX,aY,aZ]);
+			artGroup.add(cube);
+		}
+
 		this.scene.add( artGroup );
 		this.ALL_ARTS[artGroup['uuid']] = {name:"name-1",art:artGroup};
 
