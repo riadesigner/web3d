@@ -8,14 +8,14 @@
 	
 	<script async src="../libs/es-module-shims.js"></script>
 
-<!-- 		<script type="importmap">
+		<script type="importmap">
 			{
 				"imports": {
 					"three": "../three/build/three.module.js",
 					"three/addons/": "../three/examples/jsm/"
 				}
 			}
-		</script> -->
+		</script>
 
 		
 
@@ -26,8 +26,8 @@
 			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 			import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 
-			import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
-			import Stats from 'three/addons/libs/stats.module.js';
+			// import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+			// import Stats from 'three/addons/libs/stats.module.js';
 
 			let camera, scene, renderer, stats;
 			let cube, sphere, torus, material;
@@ -61,7 +61,7 @@ function init() {
 
 				new RGBELoader()
 					.setPath( 'img/' )
-					.load( 'quarry_01_1k.hdr', function ( texture ) {
+					.load( 'land-02.hdr', function ( texture ) {
 
 						texture.mapping = THREE.EquirectangularReflectionMapping;
 
@@ -74,13 +74,12 @@ function init() {
 
 				cubeRenderTarget = new THREE.WebGLCubeRenderTarget( 256 );
 				cubeRenderTarget.texture.type = THREE.HalfFloatType;
-
 				cubeCamera = new THREE.CubeCamera( 1, 1000, cubeRenderTarget );
 
 				//
 
 				material = new THREE.MeshStandardMaterial( {
-					envMap: cubeRenderTarget.texture,
+					envMap: cubeRenderTarget.texture,					
 					roughness: 0.05,
 					metalness: 1
 				} );
@@ -94,8 +93,8 @@ function init() {
 				scene.add( sphere );
 
 				const material2 = new THREE.MeshStandardMaterial( {
-					roughness: 0.1,
-					metalness: 0
+					roughness: .1,
+					metalness: 1
 				} );
 
 				cube = new THREE.Mesh( new THREE.BoxGeometry( 15, 15, 15 ), material2 );
@@ -107,14 +106,15 @@ function init() {
 				//
 
 				controls = new OrbitControls( camera, renderer.domElement );
-				controls.autoRotate = true;
+				controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+				controls.dampingFactor = 0.05;						
+				// controls.autoRotate = true;
 
 			}
 
 			function onWindowResized() {
 
 				renderer.setSize( window.innerWidth, window.innerHeight );
-
 				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();
 
@@ -122,21 +122,22 @@ function init() {
 
 			function animation( msTime ) {
 
-				const time = msTime / 1000;
+				// const time = msTime / 1000;
 
+				var time = 1;
 				cube.position.x = Math.cos( time ) * 30;
 				cube.position.y = Math.sin( time ) * 30;
 				cube.position.z = Math.sin( time ) * 30;
 
-				cube.rotation.x += 0.02;
-				cube.rotation.y += 0.03;
+				// cube.rotation.x += 0.02;
+				// cube.rotation.y += 0.03;
 
 				torus.position.x = Math.cos( time + 10 ) * 30;
 				torus.position.y = Math.sin( time + 10 ) * 30;
 				torus.position.z = Math.sin( time + 10 ) * 30;
 
-				torus.rotation.x += 0.02;
-				torus.rotation.y += 0.03;
+				// torus.rotation.x += 0.02;
+				// torus.rotation.y += 0.03;
 
 				cubeCamera.update( renderer, scene );
 

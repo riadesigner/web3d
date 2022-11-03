@@ -33,7 +33,7 @@ var Maket = {
 		this.cube.rotation.y += 0.01;
 		this.cube.rotation.x += 0.01;
 		
-		this.renderer.render( this.scene, this.camera );		
+		this.renderer.render( this.scene, this.camera );
 		window.requestAnimationFrame(function() {
 			_this.animate();
 		});		
