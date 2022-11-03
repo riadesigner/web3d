@@ -74,12 +74,12 @@ var Maket = {
 		this.controls.maxDistance = 5;
 	},
 	shuffle_cubes_pos:function() {
-		var fied_size = 6;
+		var field_size = 6;
 		for(var i in this.ARR_CUBES){
-			var posX = Math.random()*fied_size;
-			var posY = Math.random()*fied_size;
+			var posX = Math.random()*field_size;
+			var posY = Math.random()*field_size;
 			var cube = this.ARR_CUBES[i];			
-			cube.position.set(posX-fied_size/2,0,posY-fied_size/2);			
+			cube.position.set(posX-field_size/2,0,posY-field_size/2);			
 		}			
 	},
 	build_cubes:function() {
@@ -90,7 +90,7 @@ var Maket = {
 		var arr = Array.from(Array(10).keys());
 
 		for(var i in arr){
-			var fied_size = 6;
+			var field_size = 6;
 			var size =  Math.random()*.4+.2;						
 			var r = Math.floor(Math.random()*254);
 			var g = Math.floor(Math.random()*254);
