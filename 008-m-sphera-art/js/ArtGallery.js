@@ -95,17 +95,15 @@ var ArtGallery = {
 
         this.SPHERA_POINTS = vertices;
 
-        var pointsMaterial = new THREE.PointsMaterial( {
-          color: 0x0080ff,
-          map: texture,
-          size: 1,
-          alphaTest: 0.5
-        } );
-
-        var pointsGeometry = new THREE.BufferGeometry().setFromPoints( vertices );
-
-        var points = new THREE.Points( pointsGeometry, pointsMaterial );
-        group.add( points );
+        // var pointsMaterial = new THREE.PointsMaterial( {
+        //   color: 0x0080ff,
+        //   map: texture,
+        //   size: 1,
+        //   alphaTest: 0.5
+        // } );
+        // var pointsGeometry = new THREE.BufferGeometry().setFromPoints( vertices );
+        // var points = new THREE.Points( pointsGeometry, pointsMaterial );
+        // group.add( points );
 
 
   },
@@ -132,15 +130,17 @@ var ArtGallery = {
     var minSize = baseSize*.3;
     var maxSize = baseSize*.8;
 
-    var color = new THREE.Color("rgb(115, 208, 251)");
-
+    
+    var loader = new THREE.TextureLoader();
+    var texture = loader.load( 'img/cube-03_.png' );
     var material_textured = new THREE.MeshStandardMaterial( {
-        // map:texture,
-        color:color,
+        map:texture,
+        // color:color,
         roughness: 0,
         metalness: 0
       } );    
 
+    var color = new THREE.Color("rgb(115, 208, 251)");
     var material = new THREE.MeshStandardMaterial( {
         // map:texture,
         // color:color,
@@ -152,9 +152,6 @@ var ArtGallery = {
     artGroup.add(largeCube);
 
     foo.addToArt(baseSize,[0,0,0],[0,0,0]);
-
-    console.log('this.SPHERA_POINTS',this.SPHERA_POINTS);
-    console.log('baseSize',baseSize);
 
     this.SPHERA_POINTS.sort( () => .5 - Math.random());
 
@@ -162,15 +159,15 @@ var ArtGallery = {
       var size = Math.random() * (maxSize-minSize) + minSize;
             
       var v = this.SPHERA_POINTS[i];
-
       var pX = v.x;
       var pY = v.y;
-      var pZ = v.z;           
-
+      var pZ = v.z;
       var aX = Math.random()*360;
       var aY = Math.random()*360;
       var aZ = Math.random()*360;
+
       var cube = this.build_one_cube(size,material,[pX,pY,pZ],[aX,aY,aZ]);
+
       artGroup.add(cube);
 
       foo.addToArt(size,[pX,pY,pZ],[aX,aY,aZ]);
@@ -179,91 +176,12 @@ var ArtGallery = {
 
     this.scene.add( artGroup );
     this.ALL_ARTS[artGroup['uuid']] = {name:"name-1",art:artGroup};
-
-
-    // var JsonObject = JSON.parse(JSON.stringify(artMap));
-    // console.log(JsonObject);
-
-    $('#description textarea').val(JSON.stringify(artMap));
     
 
   },
 
-
-  build_arts:function() {
-   
-
-    var artGroup = new THREE.Group();
-
-    var artMap = [];
-
-    var foo = {
-      addToArt:function(size,pos,ang) {
-          artMap.push({
-            s:size.toFixed(2),
-            p:[pos[0].toFixed(2),pos[1].toFixed(2),pos[2].toFixed(2)],
-            a:[Math.floor(ang[0]),Math.floor(ang[1]),Math.floor(ang[2])]
-          });
-      }
-    };
-
-    var baseSize = this.PARAMS.artBaseSize;
-    var minSize = baseSize*.3;
-    var maxSize = baseSize*.8;
-
-    var color = new THREE.Color("rgb(115, 208, 251)");
-
-    var material_textured = new THREE.MeshStandardMaterial( {
-        // map:texture,
-        color:color,
-        roughness: 0,
-        metalness: 0
-      } );    
-
-    var material = new THREE.MeshStandardMaterial( {
-        // map:texture,
-        // color:color,
-        roughness: 0,
-        metalness: 1
-      } );        
-    var r = Math.random()*1;
-    var largeCube = this.build_one_cube(baseSize,material_textured,[0,0,0],[r,r,r]);
-    artGroup.add(largeCube);
-
-    foo.addToArt(baseSize,[0,0,0],[0,0,0]);
-
-    console.log('baseSize',baseSize);
-    for (var i=0; i<7; i++){
-      var size = Math.random() * (maxSize-minSize) + minSize;
-      console.log('size',size);
-      var pX = Math.random()*baseSize*2 - baseSize;
-      var pY = Math.random()*baseSize*2 - baseSize;
-      var pZ = Math.random()*baseSize*2 - baseSize;
-      var aX = Math.random()*360;
-      var aY = Math.random()*360;
-      var aZ = Math.random()*360;
-      var cube = this.build_one_cube(size,material,[pX,pY,pZ],[aX,aY,aZ]);
-      artGroup.add(cube);
-
-      foo.addToArt(size,[pX,pY,pZ],[aX,aY,aZ]);
-
-    }
-
-    this.scene.add( artGroup );
-    this.ALL_ARTS[artGroup['uuid']] = {name:"name-1",art:artGroup};
-
-
-    // var JsonObject = JSON.parse(JSON.stringify(artMap));
-    // console.log(JsonObject);
-
-    $('#description textarea').val(JSON.stringify(artMap));
-    
-
-  },
-  build_one_cube:function(size,material,pos,ang) {    
-
-    var cube = new THREE.Mesh( new THREE.BoxGeometry( size, size, size ), material );    
-    // cube.castShadow = true;                 
+  build_one_cube:function(size,material,pos,ang) { 
+    var cube = new THREE.Mesh( new THREE.BoxGeometry( size, size, size ), material );
     cube.position.set(pos[0],pos[1],pos[2]);
     cube.rotation.set(ang[0],ang[1],ang[2]);
     return cube;
