@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
+import { ArtTexture } from 'mylib/ArtTexture.js';
 
 var ArtGallery = {
   init:function(target,opt) {
@@ -114,7 +115,9 @@ var ArtGallery = {
 
     var artMap = [];
 
-
+    var TOTAL_SPUTNIKS = 7;
+    var ARR_COLORS = ["#ffcc00","#aadd33","#4477ff","#0033ff","#114433","#ccddaa"];
+    // var ALL_ARR_COLORS = ARR_COLORS.unshift("#ffffff");
 
     var foo = {
       addToArt:function(size,pos,ang) {
@@ -123,30 +126,27 @@ var ArtGallery = {
             p:[pos[0].toFixed(2),pos[1].toFixed(2),pos[2].toFixed(2)],
             a:[Math.floor(ang[0]),Math.floor(ang[1]),Math.floor(ang[2])]
           });
+      },
+      get_textured_material:function() {
+        var canvas = ArtTexture.init(ARR_COLORS).get_texture(300,300);        
+        var image = canvas.toDataURL('image/png');    
+        var loader = new THREE.TextureLoader();
+        var texture = loader.load( image );
+        return new THREE.MeshStandardMaterial( { map:texture, roughness: 0, metalness: 0 });
+      },
+      get_colored_material:function(color_string){
+        var color = new THREE.Color(color_string);
+        return new THREE.MeshStandardMaterial( { color:color, roughness: 0, metalness: 1});
       }
     };
 
     var baseSize = this.PARAMS.artBaseSize;
     var minSize = baseSize*.3;
     var maxSize = baseSize*.8;
-
     
-    var loader = new THREE.TextureLoader();
-    var texture = loader.load( 'img/cube-03_.png' );
-    var material_textured = new THREE.MeshStandardMaterial( {
-        map:texture,
-        // color:color,
-        roughness: 0,
-        metalness: 0
-      } );    
-
-    var color = new THREE.Color("rgb(115, 208, 251)");
-    var material = new THREE.MeshStandardMaterial( {
-        // map:texture,
-        // color:color,
-        roughness: 0,
-        metalness: 1
-      } );        
+    var material_textured = foo.get_textured_material();
+    var material = foo.get_colored_material("white");
+    
     var r = Math.random()*1;
     var largeCube = this.build_one_cube(baseSize,material_textured,[0,0,0],[r,r,r]);
     artGroup.add(largeCube);
@@ -155,7 +155,7 @@ var ArtGallery = {
 
     this.SPHERA_POINTS.sort( () => .5 - Math.random());
 
-    for (var i=0; i<7; i++){
+    for (var i=0; i<TOTAL_SPUTNIKS; i++){
       var size = Math.random() * (maxSize-minSize) + minSize;
             
       var v = this.SPHERA_POINTS[i];
@@ -166,7 +166,8 @@ var ArtGallery = {
       var aY = Math.random()*360;
       var aZ = Math.random()*360;
 
-      var cube = this.build_one_cube(size,material,[pX,pY,pZ],[aX,aY,aZ]);
+      var current_material = Math.random()<.5? material_textured : material;
+      var cube = this.build_one_cube(size,current_material,[pX,pY,pZ],[aX,aY,aZ]);
 
       artGroup.add(cube);
 

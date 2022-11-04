@@ -8,6 +8,8 @@
 	<link rel="stylesheet" type="text/css" href="./css/style.css">
 	
 	<script src="../libs/jquery.min.js"></script>
+	<script src="../libs/rhill-voronoi-core.js"></script>
+	
 	<!-- <script async src="../libs/es-module-shims.js"></script> -->
 	<script async src="https://ga.jspm.io/npm:es-module-shims@1.6.2/dist/es-module-shims.js"></script>
 
@@ -16,7 +18,8 @@
       {
         "imports": {
 					"three": "../three/build/three.module.js",
-					"three/addons/": "../three/examples/jsm/"          
+					"three/addons/": "../three/examples/jsm/",
+					"mylib/":"./js/"
         }
       }
   </script>	
@@ -27,7 +30,7 @@
 			bgImage:"land-02.hdr"
 		};
 			
-			import { ArtGallery } from "./js/ArtGallery.js";
+			import { ArtGallery } from "mylib/ArtGallery.js";			
 			
 
 			$(function() {				
