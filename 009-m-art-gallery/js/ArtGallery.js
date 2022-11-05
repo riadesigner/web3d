@@ -77,7 +77,7 @@ var ArtGallery = {
     var COLUMS = 6;
     var k = ARR_BRANDS.length%COLUMS;
     var ROWS = (ARR_BRANDS.length-k)/COLUMS + (k?1:0); 
-    var ART_SIZE = 80;
+    var ART_SIZE = 60;
     
     var galleryGroup = new THREE.Group();        
 
@@ -89,14 +89,19 @@ var ArtGallery = {
 
         var art = this.build_art(brand.colors);
         this.ALL_ARTS[art['uuid']] = {name : brand.name, art : art};
-        art.position.set(j*ART_SIZE,0,-i*ART_SIZE);
+        
+        var CHESS = i%2>0 ? 0 : ART_SIZE/2;
+        var rnd = Math.random()*ART_SIZE;
+        var POS_Y = Math.random() < .5 ? rnd:-rnd; 
+
+        art.position.set(j*ART_SIZE + CHESS, POS_Y, -i*ART_SIZE);        
         
         galleryGroup.add(art);
 
       }      
     };
-
-    galleryGroup.position.set(-ART_SIZE*COLUMS/2+ART_SIZE/2,0,0); 
+    var X_CENTER = -ART_SIZE*COLUMS/2+ART_SIZE/2;
+    galleryGroup.position.set(X_CENTER,0,-X_CENTER); 
     this.scene.add( galleryGroup );
     
       
@@ -124,7 +129,7 @@ var ArtGallery = {
       this.controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
       this.controls.dampingFactor = 0.05;   
       this.controls.screenSpacePanning = false;
-      this.controls.maxPolarAngle = Math.PI / 2;
+      // this.controls.maxPolarAngle = Math.PI / 2;
       // this.controls.minDistance = 1;
       // this.controls.maxDistance = 5;      
       // this.controls.autoRotate = true;
