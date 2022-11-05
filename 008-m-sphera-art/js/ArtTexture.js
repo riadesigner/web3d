@@ -149,7 +149,7 @@ var ArtTexture = {
     this.canvas.width = width;
     this.canvas.height = height;       
     var grid = grid?grid:15;
-    var noise = noise!=="undefined"?noise:10;
+    var noise = noise!=="undefined"?noise:4;
     document.body.append(this.canvas);
     VoronoiImage.init(this.canvas,this.arrColors,{sites_grid:grid,sites_noise:noise});
     return this.canvas;
