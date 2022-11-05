@@ -70,7 +70,7 @@ var ArtGallery = {
         {name:"GETCLO",colors:["#ffcc00","#aadd33","#4477ff","#0033ff","#114433","#ccddaa"],link:'https://cyber-brand.ru/collections/letnyaya-kollekcziya-getclo//#collections-menu'},
         {name:"GAUR",colors:["#cc0033","#ff5566","#22aaff","#cc88ee","#ff0022","#3344ee"],link:'https://cyber-brand.ru/collections/gaur-kollekcziya//#collections-menu'},
         {name:"Nastas’a Fasonova",colors:["#eeffee","#eedd44","#00ff55","#1100aa","#aaff00","#cc7777"],link:'https://cyber-brand.ru/collections/nastasa-fasonova-kollekcziya//#collections-menu'},
-        {name:"IVAN FEDOROV",colors:["#334499","#6677ee","#aabb00","#aa00bb","#00aaff","#aa44dd"]},
+        // {name:"IVAN FEDOROV",colors:["#334499","#6677ee","#aabb00","#aa00bb","#00aaff","#aa44dd"]},
         {name:"Kiwi.dress",colors:["#770044","#449900","#eeff77","#ee0000","#ffaa00","#dd2288"],link:'https://cyber-brand.ru/collections/kiwi-dress-kollekcziya//#collections-menu'},
         {name:"YANVAR’",colors:["#cc0033","#ff5566","#22aaff","#cc88ee","#ff0022","#3344ee"],link:'https://cyber-brand.ru/collections/yanvar/#collections-menu'},  
 
@@ -331,13 +331,11 @@ var ArtGallery = {
         var mesh = this.intersects[ 0 ].object.isMesh ? "объект":"";
         if(mesh){
 
-          var BRAND_NAME = this.get_brand_name_by_uuid(uuid);          
-          document.body.style.cursor = "pointer";          
+          var BRAND_NAME = this.get_brand_name_by_uuid(uuid);                    
           this.update_brand_title(BRAND_NAME,true);
 
         }
-      }else{
-        document.body.style.cursor = "default";
+      }else{        
         this.update_brand_title("",false);
       }
     }
@@ -349,11 +347,13 @@ var ArtGallery = {
       this.CURRENT_BRAND_TITLE=title;
     };
     if(mode){
+      document.body.style.cursor = "pointer";
       this.brand_label.style.display="block";
       var x = this.mouseX-100- this.CANVAS_OFFSET_LEFT;
       var y = this.mouseY-100- this.CANVAS_OFFSET_TOP;
       this.brand_label.style.transform = 'translate('+x+'px, '+y+'px)';         
     }else{
+      document.body.style.cursor = "default";
       this.brand_label.style.display="none";
     }
 
