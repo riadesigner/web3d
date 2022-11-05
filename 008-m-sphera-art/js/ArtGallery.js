@@ -110,27 +110,22 @@ var ArtGallery = {
   },
   build_arts_2:function() {
    
+    var _this=this;
 
-    var artGroup = new THREE.Group();
-
-    var artMap = [];
+    var artGroup = new THREE.Group();    
 
     var TOTAL_SPUTNIKS = 7;
     var ARR_COLORS = ["#ffcc00","#aadd33","#4477ff","#0033ff","#114433","#ccddaa"];    
 
+    var M_TEXTURED = Math.round(Math.random())+2;
+    var M_WHITE = 2;
+    var M_COLORED = TOTAL_SPUTNIKS - M_TEXTURED - M_WHITE;
+    
     var baseSize = this.PARAMS.artBaseSize;
     var minSize = baseSize*.2;
     var maxSize = baseSize*.6;
 
-
     var foo = {
-      addToArt:function(size,pos,ang) {
-          artMap.push({
-            s:size.toFixed(2),
-            p:[pos[0].toFixed(2),pos[1].toFixed(2),pos[2].toFixed(2)],
-            a:[Math.floor(ang[0]),Math.floor(ang[1]),Math.floor(ang[2])]
-          });
-      },
       get_textured_material:function() {
         var canvas = ArtTexture.init(ARR_COLORS).get_texture(300,300);        
         var image = canvas.toDataURL('image/png');    
@@ -141,37 +136,65 @@ var ArtGallery = {
       get_colored_material:function(color_string){
         var color = new THREE.Color(color_string);
         return new THREE.MeshStandardMaterial( { color:color, roughness: 0, metalness: 1});
+      },
+      get_random_cube:function(mode, index) {
+        var size = Math.random() * (maxSize-minSize) + minSize;            
+        var v = _this.SPHERA_POINTS[s_count];
+        var pX = v.x;
+        var pY = v.y;
+        var pZ = v.z;
+        var aX = Math.random()*360;
+        var aY = Math.random()*360;
+        var aZ = Math.random()*360;
+        switch (mode) {
+          case "textured":
+            var current_material = textured_material;
+          break;
+          case "colored":
+            var rnd = Math.round(Math.random()*(colored_materials.length-1));      
+            var current_material = colored_materials[rnd];
+          break;
+          case "white":
+            var current_material = white_materials;
+          break;                      
+        }        
+        return _this.build_one_cube(size,current_material,[pX,pY,pZ],[aX,aY,aZ]);
       }
     };
 
-    var material_textured = foo.get_textured_material();        
-    var colored_materials = [];    
-    colored_materials.push(foo.get_colored_material("white"));    
+    var textured_material = foo.get_textured_material();    
+    var white_materials = foo.get_colored_material("white");    
+    var colored_materials = [];
     for(var i in ARR_COLORS){
       colored_materials.push(foo.get_colored_material(ARR_COLORS[i]));
     }
     
-    var r = Math.random()*1;
-    var largeCube = this.build_one_cube(baseSize,material_textured,[0,0,0],[r,r,r]);
+    // LARGE CUBE IN CENTER
+    var r = Math.random();
+    var largeCube = this.build_one_cube(baseSize,textured_material,[0,0,0],[r,r,r]);
     artGroup.add(largeCube);
-    foo.addToArt(baseSize,[0,0,0],[0,0,0]);
 
+    var s_count = 0;
     this.SPHERA_POINTS.sort( () => .5 - Math.random());
-    for (var i=0; i<TOTAL_SPUTNIKS; i++){
-      var size = Math.random() * (maxSize-minSize) + minSize;            
-      var v = this.SPHERA_POINTS[i];
-      var pX = v.x;
-      var pY = v.y;
-      var pZ = v.z;
-      var aX = Math.random()*360;
-      var aY = Math.random()*360;
-      var aZ = Math.random()*360;
-      var rnd = Math.round(Math.random()*(colored_materials.length-1));      
-      var current_material = Math.random()<.5? material_textured : colored_materials[rnd];
-      var cube = this.build_one_cube(size,current_material,[pX,pY,pZ],[aX,aY,aZ]);
+
+
+    for (var i=0; i < M_TEXTURED; i++){
+      var cube = foo.get_random_cube("textured",s_count);      
       artGroup.add(cube);
-      foo.addToArt(size,[pX,pY,pZ],[aX,aY,aZ]);
+      s_count++;
     }
+
+    for (var i=0; i < M_COLORED; i++){
+      var cube = foo.get_random_cube("colored",s_count);
+      artGroup.add(cube);
+      s_count++;
+    }    
+
+    for (var i=0; i < M_WHITE; i++){
+      var cube = foo.get_random_cube("white",s_count);
+      artGroup.add(cube);
+      s_count++;
+    }        
 
     this.scene.add( artGroup );
     this.ALL_ARTS[artGroup['uuid']] = {name:"name-1",art:artGroup};
