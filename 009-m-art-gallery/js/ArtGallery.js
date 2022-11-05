@@ -35,25 +35,81 @@ var ArtGallery = {
   },
   build_all_arts:function() {
 
-    var art = this.build_art();
-    this.ALL_ARTS[art['uuid']] = {name : "BRAND-1", art : art};
-    art.position.set(30,0,0);
+    var ARR_BRANDS = [
+        {name:"Alexander Varlakov",colors:["#ffcc00","#aadd33","#4477ff","#0033ff","#114433","#ccddaa"]},
+        {name:"Ermolenko",colors:["#cc0033","#ff5566","#22aaff","#cc88ee","#ff0022","#3344ee"]},
+        {name:"Zhogova",colors:["#eeffee","#eedd44","#00ff55","#1100aa","#aaff00","#cc7777"]},
+        {name:"Natalya Lopatkina",colors:["#334499","#6677ee","#aabb00","#aa00bb","#00aaff","#aa44dd"]},
+        {name:"AKULINA IRINA",colors:["#770044","#449900","#eeff77","#ee0000","#ffaa00","#dd2288"]},
+        {name:"Danishine",colors:["#cc0033","#ff5566","#22aaff","#cc88ee","#ff0022","#3344ee"]},
 
-    var art2 = this.build_art();
-    this.ALL_ARTS[art['uuid']] = {name : "BRAND-2", art : art2};
-    art2.position.set(-30,0,0);    
+        {name:"Лесозаводский",colors:["#ffcc00","#aadd33","#4477ff","#0033ff","#114433","#ccddaa"]},
+        {name:"Владивосток ",colors:["#cc0033","#ff5566","#22aaff","#cc88ee","#ff0022","#3344ee"]},
+        {name:"Хлопок",colors:["#eeffee","#eedd44","#00ff55","#1100aa","#aaff00","#cc7777"]},
+        {name:"Design_2204",colors:["#334499","#6677ee","#aabb00","#aa00bb","#00aaff","#aa44dd"]},
+        {name:"DIA",colors:["#770044","#449900","#eeff77","#ee0000","#ffaa00","#dd2288"]},
+        {name:"Люди в Худи",colors:["#cc0033","#ff5566","#22aaff","#cc88ee","#ff0022","#3344ee"]},
+
+        {name:"GETCLO",colors:["#ffcc00","#aadd33","#4477ff","#0033ff","#114433","#ccddaa"]},
+        {name:"GAUR",colors:["#cc0033","#ff5566","#22aaff","#cc88ee","#ff0022","#3344ee"]},
+        {name:"Nastas’a Fasonova",colors:["#eeffee","#eedd44","#00ff55","#1100aa","#aaff00","#cc7777"]},
+        {name:"IVAN FEDOROV",colors:["#334499","#6677ee","#aabb00","#aa00bb","#00aaff","#aa44dd"]},
+        {name:"Kiwi.dress",colors:["#770044","#449900","#eeff77","#ee0000","#ffaa00","#dd2288"]},
+        {name:"YANVAR’",colors:["#cc0033","#ff5566","#22aaff","#cc88ee","#ff0022","#3344ee"]},  
+
+        {name:"ЧЕРДАКFOREVER",colors:["#ffcc00","#aadd33","#4477ff","#0033ff","#114433","#ccddaa"]},
+        {name:"BEGINNING",colors:["#cc0033","#ff5566","#22aaff","#cc88ee","#ff0022","#3344ee"]},
+        {name:"Мистер Ежик",colors:["#eeffee","#eedd44","#00ff55","#1100aa","#aaff00","#cc7777"]},
+        {name:"KUZMA",colors:["#334499","#6677ee","#aabb00","#aa00bb","#00aaff","#aa44dd"]},
+        {name:"DAP’86",colors:["#770044","#449900","#eeff77","#ee0000","#ffaa00","#dd2288"]},
+        {name:"LOPKHAN",colors:["#cc0033","#ff5566","#22aaff","#cc88ee","#ff0022","#3344ee"]},                       
+
+        {name:"Goranskaya",colors:["#ffcc00","#aadd33","#4477ff","#0033ff","#114433","#ccddaa"]},
+        {name:"Axefeel",colors:["#cc0033","#ff5566","#22aaff","#cc88ee","#ff0022","#3344ee"]},
+        {name:"SANDRA&MICHELLE",colors:["#eeffee","#eedd44","#00ff55","#1100aa","#aaff00","#cc7777"]},
+        {name:"Sokolova",colors:["#334499","#6677ee","#aabb00","#aa00bb","#00aaff","#aa44dd"]},
+        {name:"Razuvan",colors:["#770044","#449900","#eeff77","#ee0000","#ffaa00","#dd2288"]},
+        {name:"OXA",colors:["#cc0033","#ff5566","#22aaff","#cc88ee","#ff0022","#3344ee"]},       
+
+      ];    
+
+
+    var COLUMS = 6;
+    var k = ARR_BRANDS.length%COLUMS;
+    var ROWS = (ARR_BRANDS.length-k)/COLUMS + (k?1:0); 
+    var ART_SIZE = 80;
     
+    var galleryGroup = new THREE.Group();        
 
+    for(var i=0;i<ROWS;i++){
+      for(var j=0;j<COLUMS;j++){        
+        var pos = j+COLUMS*i;
+        var brand = ARR_BRANDS[pos];
+        if(!brand) break;
+
+        var art = this.build_art(brand.colors);
+        this.ALL_ARTS[art['uuid']] = {name : brand.name, art : art};
+        art.position.set(j*ART_SIZE,0,-i*ART_SIZE);
+        
+        galleryGroup.add(art);
+
+      }      
+    };
+
+    galleryGroup.position.set(-ART_SIZE*COLUMS/2+ART_SIZE/2,0,0); 
+    this.scene.add( galleryGroup );
+    
+      
   },
   build_scene:function() {
 
     var _this=this;
 
       this.scene = new THREE.Scene();
-      this.scene.rotation.y = 0.5; // avoid flying objects occluding the sun
+      this.scene.rotation.y = -0.2; // avoid flying objects occluding the sun
 
       this.camera = new THREE.PerspectiveCamera( 60, this.CANVAS_WIDTH / this.CANVAS_HEIGHT, 1, 1000 );
-      this.camera.position.z = 75;
+      this.camera.position.z = 100;
 
       this.renderer = new THREE.WebGLRenderer( { antialias: true } );
       this.renderer.setPixelRatio( window.devicePixelRatio );
@@ -63,8 +119,15 @@ var ArtGallery = {
       this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
       this.canvas.appendChild( this.renderer.domElement );      
 
-      this.controls = new OrbitControls( this.camera, this.renderer.domElement );
-      this.controls.autoRotate = true;
+      this.controls = new OrbitControls( this.camera, this.renderer.domElement );      
+      // this.controls.listenToKeyEvents( window ); // optional
+      this.controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+      this.controls.dampingFactor = 0.05;   
+      this.controls.screenSpacePanning = false;
+      this.controls.maxPolarAngle = Math.PI / 2;
+      // this.controls.minDistance = 1;
+      // this.controls.maxDistance = 5;      
+      // this.controls.autoRotate = true;
 
       window.addEventListener( 'resize', this.on_window_resized.bind(this) );      
 
@@ -96,14 +159,14 @@ var ArtGallery = {
         this.SPHERA_POINTS = vertices;
 
   },
-  build_art:function() {
+  build_art:function(arr_colors) {
    
     var _this=this;
 
     var artGroup = new THREE.Group();    
 
     var TOTAL_SPUTNIKS = 7;
-    var ARR_COLORS = ["#ffcc00","#aadd33","#4477ff","#0033ff","#114433","#ccddaa"];    
+    var ARR_COLORS = arr_colors;
 
     var M_TEXTURED = Math.round(Math.random())+2;
     var M_WHITE = 2;
@@ -115,8 +178,7 @@ var ArtGallery = {
 
     var foo = {
       get_textured_material:function() {
-        var canvas = ArtTexture.init(ARR_COLORS).get_texture(300,300);        
-        var image = canvas.toDataURL('image/png');    
+        var image = ArtTexture.init(ARR_COLORS).get_texture(300,300);                
         var loader = new THREE.TextureLoader();
         var texture = loader.load( image );
         return new THREE.MeshStandardMaterial( { map:texture, roughness: 0, metalness: 0 });
@@ -185,7 +247,7 @@ var ArtGallery = {
       s_count++;
     };        
 
-    this.scene.add( artGroup );
+    // this.scene.add( artGroup );
 
     return artGroup;
 

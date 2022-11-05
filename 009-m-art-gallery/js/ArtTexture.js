@@ -1,12 +1,13 @@
 
 var VoronoiImage = {
-  init:function(canvas,colors,opt) {
+  init:function(canvas,colors,size,opt) {
     this.voronoi = new Voronoi();
     this.opt = opt; 
     this.canvas = canvas;
     this.ctx = this.canvas.getContext('2d');    
     this.ARR_COLORS = colors;
-    this.bbox = {xl: 0,xr: this.canvas.offsetWidth,yt: 0,yb: this.canvas.offsetHeight};   
+    this.SIZE = size;        
+    this.bbox = {xl: 0,xr: this.SIZE.w,yt: 0,yb: this.SIZE.h};   
     this.random_sites();
     this.behavior();
     this.render();
@@ -18,7 +19,7 @@ var VoronoiImage = {
     this.render();
   },
   behavior:function() {
-    document.addEventListener('mouseup',(event)=>{this.random_sites();});
+    // document.addEventListener('mouseup',(event)=>{this.random_sites();});
   },
   createSites:function() {
     var grid = this.opt.sites_grid;
@@ -26,8 +27,8 @@ var VoronoiImage = {
     var noise = this.opt.sites_noise;
 
     var arr = []; 
-    var stepX = this.canvas.offsetWidth/grid;
-    var stepY = this.canvas.offsetHeight/grid;
+    var stepX = this.SIZE.w/grid;
+    var stepY = this.SIZE.h/grid;
     for(var i=stepX;i<stepX*grid;i+=stepX){
       for(var j=stepY;j<stepY*grid;j+=stepY){
         if(noise){
@@ -68,7 +69,7 @@ var VoronoiImage = {
         
         this.ctx.globalAlpha = 1;
         this.ctx.beginPath();
-        this.ctx.rect(0,0,this.canvas.offsetWidth,this.canvas.offsetHeight);
+        this.ctx.rect(0,0,this.SIZE.w,this.SIZE.h);
         this.ctx.fillStyle = 'white';
         this.ctx.fill();                
         if (!this.diagram) {return;}
@@ -150,9 +151,8 @@ var ArtTexture = {
     this.canvas.height = height;       
     var grid = grid?grid:15;
     var noise = noise!=="undefined"?noise:4;
-    document.body.append(this.canvas);
-    VoronoiImage.init(this.canvas,this.arrColors,{sites_grid:grid,sites_noise:noise});
-    return this.canvas;
+    VoronoiImage.init(this.canvas,this.arrColors,{w:width,h:height},{sites_grid:grid,sites_noise:noise});
+    return this.canvas.toDataURL('image/png');  
   } 
 };
 
