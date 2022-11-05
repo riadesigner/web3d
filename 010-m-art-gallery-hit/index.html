@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+	
+	<link rel="stylesheet" type="text/css" href="./css/style.css">
+	
+	<script src="../libs/jquery.min.js"></script>
+	<script src="../libs/rhill-voronoi-core.js"></script>
+	
+	<!-- <script async src="../libs/es-module-shims.js"></script> -->
+	<script async src="https://ga.jspm.io/npm:es-module-shims@1.6.2/dist/es-module-shims.js"></script>
+
+
+	<script type="importmap">	
+      {
+        "imports": {
+					"three": "../three/build/three.module.js",
+					"three/addons/": "../three/examples/jsm/",
+					"mylib/":"./js/"
+        }
+      }
+  </script>	
+	<script type="module">
+		
+		var CFG = {
+			imgPath:"img/",
+			bgImage:"land-02.hdr"
+		};
+			
+			import { ArtGallery } from "mylib/ArtGallery.js";			
+			
+
+			$(function() {				
+				ArtGallery.init('scene3d','brand-title',CFG);
+			});
+			
+
+	</script>
+
+	
+
+</head>
+<body>
+
+
+<div id="scene3d"><div id="brand-title" class="noselect"></div></div>
+
+
+
+
+
+</body>
+</html>
