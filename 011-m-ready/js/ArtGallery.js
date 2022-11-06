@@ -28,7 +28,8 @@ var ArtGallery = {
     this.REFLECT_IMAGE = opt.refImage; 
 
     this.PARAMS = {
-      artBaseSize:20
+      artBaseSize:20,
+      autoRotateSpeed:.2
     };
 
     this.POINTER_MOVED = false;
@@ -41,9 +42,8 @@ var ArtGallery = {
 
     this.preload_textures({
       onReady:()=>{
-
-        console.log('this.TEXTURES',this.TEXTURES)
-        this.build_scene();     
+        console.log('this.TEXTURES',this.TEXTURES)        
+        this.build_scene();
         this.build_sphera_art();
         this.build_all_arts();
         this.animation();
@@ -51,23 +51,11 @@ var ArtGallery = {
       }
     });
   },
-  preload_textures:function(opt) {
 
-    var _this=this;
+  preload_textures:function(opt) {
 
 
     this.TEXTURES = {};
-
-
-    // var [bgImage, refImage] = await Promise.all([
-    //         Hdr.load(this.IMG_PATH+this.BG_IMAGE),
-    //         // Hdr.load(this.IMG_PATH+this.REFLECT_IMAGE)
-    //         // Model.load("/assets/models/drink.glb"),
-    //         // Texture.load("/assets/textures/pattern.jpg")
-    //     ]);
-
-    
-
 
     Promise.all([
 
@@ -78,70 +66,25 @@ var ArtGallery = {
 
             this.TEXTURES['bg'] = images[0];
             this.TEXTURES['ref'] = images[1];
-            
-            console.log("-----!!!!!!!-----")
-            console.log("bg,ref",images)
-
-             opt && opt.onReady();
-
-
+        
+            opt && opt.onReady();
     });
-
-
-
-
-
-
-
-    // Hdr.load(this.IMG_PATH+this.BG_IMAGE).then((texture)=>{
-    //   console.log("yes!!",texture);
-    // })
-
-
-    // new RGBELoader().load( this.IMG_PATH+this.BG_IMAGE, ( texture )=> {
-    //         texture.mapping = THREE.EquirectangularReflectionMapping;
-    //         // _this.scene.background = texture;
-
-    //         new RGBELoader().load(this.IMG_PATH+this.BG_IMAGE, ( texture )=> {
-    //         texture.mapping = THREE.EquirectangularReflectionMapping;
-    //         // _this.scene.environment = texture;
-
-    //             opt && opt.onReady();
-
-    //         })
-    //   });       
-
-      // var textureManager = new THREE.LoadingManager();
-
-      // textureManager.onProgress = function ( item, loaded, total ) {
-      //   console.log('item, loaded, total',item, loaded, total);          
-      // };
-
-      // textureManager.onLoad = function () {
-      //     // all textures are loaded
-      //     // ...
-      //     console.log('all loaded');
-      // };
-
-      // var textureLoader = new THREE.ImageLoader( textureManager );
-      
-      // this.TEXTURES = {};
-      
-      // var bg_texture = new THREE.Texture();
-      // this.TEXTURES['bg'] = bg_texture;
-      // textureLoader.load( 'img/'+this.REFLECT_IMAGE, ( image )=> { bg_texture.image = image; } );
-
-      // var bg_texture = new THREE.Texture();
-      // this.TEXTURES['bg'] = bg_texture;
-      // textureLoader.load( 'img/'+this.REFLECT_IMAGE, ( image )=> { bg_texture.image = image; } );      
-
    
 
   },
   behavior:function() {
   
     var _this=this; 
-    this.canvas.addEventListener( 'pointermove', (event)=>{ this.onPointerMove(event);}); 
+  
+    var btnRight = document.getElementById('scene3d-btn-right'); 
+    btnRight.addEventListener('pointerdown',()=>{ this.controls.autoRotateSpeed = 20; },false);
+    btnRight.addEventListener('pointerup',()=>{ this.controls.autoRotateSpeed = this.PARAMS.autoRotateSpeed; },false);
+
+    var btnLeft = document.getElementById('scene3d-btn-left'); 
+    btnLeft.addEventListener('pointerdown',()=>{ this.controls.autoRotateSpeed=-20; },false);
+    btnLeft.addEventListener('pointerup',()=>{ this.controls.autoRotateSpeed = this.PARAMS.autoRotateSpeed; },false);    
+
+    this.canvas.addEventListener( 'pointermove', (event)=>{ this.onPointerMove(event);  }); 
     this.canvas.addEventListener( 'pointerdown', (event)=>{ this.on_canvas_press(event);}); 
     this.canvas.addEventListener( 'pointerup', ()=>{ !this.POINTER_MOVED && this.on_art_clicked();}); 
     window.addEventListener( 'resize', this.on_window_resized.bind(this) );
@@ -156,8 +99,10 @@ var ArtGallery = {
   on_canvas_press:function(event) {
     this.POINTER_MOVED = false;
   },
-  onPointerMove:function(event) {       
+  onPointerMove:function(event) {   
 
+
+    // console.log('this.controls',this.controls) 
 
     this.POINTER_MOVED = true;
 
@@ -275,7 +220,7 @@ var ArtGallery = {
       this.scene.rotation.y = -0.2; // avoid flying objects occluding the sun
 
       this.camera = new THREE.PerspectiveCamera( 60, this.CANVAS_WIDTH / this.CANVAS_HEIGHT, 1, 1000 );
-      this.camera.position.z = 100;
+      this.camera.position.z = 130;
 
       this.renderer = new THREE.WebGLRenderer( { antialias: true } );
       this.renderer.setPixelRatio( window.devicePixelRatio );
@@ -285,20 +230,24 @@ var ArtGallery = {
       this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
       this.canvas.appendChild( this.renderer.domElement );      
 
+
+
       this.controls = new OrbitControls( this.camera, this.renderer.domElement );      
-      // this.controls.listenToKeyEvents( window ); // optional
+      this.controls.listenToKeyEvents( window ); // optional
       this.controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
       this.controls.dampingFactor = 0.05;   
       this.controls.screenSpacePanning = false;
       // this.controls.maxPolarAngle = Math.PI / 2;
-      // this.controls.minDistance = 100;
-      this.controls.maxDistance = 170;      
-      // this.controls.autoRotate = true;
+      this.controls.minDistance = 50;
+      this.controls.maxDistance = 230;      
+      this.controls.autoRotate = true;
+      this.controls.autoRotateSpeed = this.PARAMS.autoRotateSpeed;
 
-      // this.controls.touches = {
-      //   ONE: THREE.TOUCH.ROTATE,
-      //   TWO: THREE.TOUCH.DOLLY_PAN
-      // }      
+      this.controls.touches = {
+        ONE: THREE.TOUCH.ROTATE,
+        TWO: THREE.TOUCH.DOLLY_PAN
+      };
+   
 
       // add hit test
       this.raycaster = new THREE.Raycaster();
@@ -440,11 +389,13 @@ var ArtGallery = {
       this.camera.updateProjectionMatrix();    
   },
   animation:function(){
-          
+            
+
       this.controls.update();
       this.renderer.render( this.scene, this.camera );    
       this.raycaster.setFromCamera( this.pointer, this.camera );    
       this.intersects = this.raycaster.intersectObjects( this.scene.children );         
+
 
   },
   get_brand_by_uuid:function(uuid) {
