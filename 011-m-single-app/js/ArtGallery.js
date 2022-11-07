@@ -1,31 +1,30 @@
 "use strict"
 
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.min.js';
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
-import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
+import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.min.js';
 import { ArtTexture } from 'mylib/ArtTexture.js';
 import { Hdr } from 'mylib/hdr.js';
 
 var ArtGallery = {
-  init:function(target,brand_label,opt) {
+  init:function(target,opt) {
 
     
-    
     this.canvas = document.getElementById(target);
-    this.brand_label = document.getElementById(brand_label);
+    this.brand_label = document.getElementById(opt.brandTitle);
 
     this.brand_label.style.display = "none";     
 
-    this.CANVAS_HEIGHT = this.canvas.offsetHeight;
-    this.CANVAS_WIDTH = this.canvas.offsetWidth;    
+    this.recalc_canvas();
 
-    this.CANVAS_OFFSET_LEFT = 0;
-    this.CANVAS_OFFSET_TOP = 0;
-    
     this.IMG_PATH = opt.imgPath;
     this.BG_IMAGE = opt.bgImage; 
-    this.REFLECT_IMAGE = opt.refImage; 
+    this.REFLECT_IMAGE = opt.refImage;
+    this.btnLeft = document.getElementById(opt.btnLeft);
+    this.btnRight = document.getElementById(opt.btnRight);
+    this.noteWin = document.getElementById(opt.noteWin);
+    this.btnCloseNote = document.getElementById(opt.btnCloseNote);
 
     this.PARAMS = {
       artBaseSize:20,
@@ -75,14 +74,14 @@ var ArtGallery = {
   behavior:function() {
   
     var _this=this; 
-  
-    var btnRight = document.getElementById('scene3d-btn-right'); 
-    btnRight.addEventListener('pointerdown',()=>{ this.controls.autoRotateSpeed = 20; },false);
-    btnRight.addEventListener('pointerup',()=>{ this.controls.autoRotateSpeed = this.PARAMS.autoRotateSpeed; },false);
-
-    var btnLeft = document.getElementById('scene3d-btn-left'); 
-    btnLeft.addEventListener('pointerdown',()=>{ this.controls.autoRotateSpeed=-20; },false);
-    btnLeft.addEventListener('pointerup',()=>{ this.controls.autoRotateSpeed = this.PARAMS.autoRotateSpeed; },false);    
+      
+    this.btnRight.addEventListener('pointerdown',()=>{ this.close_note_win(); this.controls.autoRotateSpeed = 20; },false);
+    this.btnRight.addEventListener('pointerup',()=>{ this.controls.autoRotateSpeed = this.PARAMS.autoRotateSpeed; },false);
+    
+    this.btnLeft.addEventListener('pointerdown',()=>{ this.close_note_win(); this.controls.autoRotateSpeed=-20; },false);
+    this.btnLeft.addEventListener('pointerup',()=>{ this.controls.autoRotateSpeed = this.PARAMS.autoRotateSpeed; },false);        
+    
+    this.btnCloseNote.addEventListener('click',()=>{ this.close_note_win(); });
 
     this.canvas.addEventListener( 'pointermove', (event)=>{ this.onPointerMove(event);  }); 
     this.canvas.addEventListener( 'pointerdown', (event)=>{ this.on_canvas_press(event);}); 
@@ -90,6 +89,10 @@ var ArtGallery = {
     window.addEventListener( 'resize', this.on_window_resized.bind(this) );
 
   
+  },
+  close_note_win:function() {
+    if(this.noteWin.style.display!=='none')
+    this.noteWin.style.display = 'none';
   },
   on_art_clicked:function() {
     if(this.CURRENT_BRAND && this.CURRENT_BRAND_TITLE!==""){      
@@ -101,13 +104,10 @@ var ArtGallery = {
   },
   onPointerMove:function(event) {   
 
-
-    // console.log('this.controls',this.controls) 
-
     this.POINTER_MOVED = true;
 
     this.mouseX = event.pageX;
-    this.mouseY = event.pageY;
+    this.mouseY = event.pageY;    
 
     this.pointer.x = ( ( event.clientX - this.CANVAS_OFFSET_LEFT ) / this.CANVAS_WIDTH ) * 2 - 1;
     this.pointer.y = - ( ( event.clientY - this.CANVAS_OFFSET_TOP ) / this.CANVAS_HEIGHT ) * 2 + 1;   
@@ -381,13 +381,26 @@ var ArtGallery = {
     cube.rotation.set(ang[0],ang[1],ang[2]);
     return cube;
   },
-  on_window_resized:function() {
+  recalc_canvas:function() {
       this.CANVAS_WIDTH = this.canvas.offsetWidth;
       this.CANVAS_HEIGHT = this.canvas.offsetHeight;    
+      var offset = this.getOffset(this.canvas);
+      this.CANVAS_OFFSET_TOP = offset.top;
+      this.CANVAS_OFFSET_LEFT = offset.left;
+  },
+  on_window_resized:function() {
+      this.recalc_canvas();
       this.renderer.setSize( this.CANVAS_WIDTH, this.CANVAS_HEIGHT );
       this.camera.aspect = this.CANVAS_WIDTH / this.CANVAS_HEIGHT;
       this.camera.updateProjectionMatrix();    
   },
+  getOffset(el) {
+    const rect = el.getBoundingClientRect();
+    return {
+      left: rect.left + window.scrollX,
+      top: rect.top + window.scrollY
+    };
+  },  
   animation:function(){
             
 

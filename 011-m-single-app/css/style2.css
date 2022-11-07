@@ -15,7 +15,7 @@ body{
 	width: 100%;
 	height: 40vw;
 	position: absolute;
-	top:30px;left:0;		
+	top:100px;left:0;		
 }
 #scene3d{
 	width: 100%;
@@ -48,6 +48,33 @@ body{
 		background: url("../img/gallery-label.png") no-repeat top center/100% auto;
 		width:15vw;height:auto; 
 	}
+#scene3d-brand-note{
+	position: absolute;top:9vw;right:5vw;padding:20px 30px;font:.8rem arial;color:#277d84; 
+	background: rgba(255,255,255,.8);
+}
+#scene3d-brand-note-close{
+	position: absolute;top:0;right: 0;width: 26px;height: 26px;cursor: pointer;
+	background: white;border-radius:50%; transform:translate(50%,-50%);border:1px solid white;
+}
+#scene3d-brand-note-close span{display:block;border-left:1px solid black;height: 60%;width: 1px;position: absolute;top:50%;left:50%;}
+#scene3d-brand-note-close span:nth-child(1){transform:translate(-50%,-50%) rotate(45deg);}
+#scene3d-brand-note-close span:nth-child(2){transform:translate(-50%,-50%) rotate(-45deg);}
+#scene3d-brand-note-close:hover{background: black;}
+#scene3d-brand-note-close:hover span{border-left:1px solid white;}
+#scene3d-brand-note-close:active{transform:translate(50%,-50%) scale(.8);}
+
+#scene3d-brand-about{
+	display: block;	position: absolute;top:20px;right: 5vw;padding:1.2vw 6vw 1.2vw 2.5vw;
+	color:black;background: rgba(255,255,255,.6);text-decoration: none;
+	text-transform: uppercase;	cursor: pointer;font:bold 1.8vw arial;	
+}
+#scene3d-brand-about:after{content: "";position: absolute;
+	top:0;right: .6vw;width:4vw;height:100%;transform: scale(.7);transition: .3s;
+	background:url("../img/arrow-right.svg") no-repeat center right / 200% auto; 
+}
+#scene3d-brand-about:hover:after{background-position: center left;}
+#scene3d-brand-about:hover{background: rgba(255,255,255,.9);}
+#scene3d-brand-about:active{background: rgba(255,255,255,.6);}
 
 .noselect {
   -webkit-touch-callout: none; /* iOS Safari */

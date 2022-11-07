@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+	
+	<link rel="stylesheet" type="text/css" href="./css/style2.css">
+	
+	<script src="./ext-libs/jquery.min.js"></script>
+	<script src="./ext-libs/rhill-voronoi-core.js"></script>
+	<script async src="./ext-libs/es-module-shims.js"></script>
+
+	<script type="importmap">	
+      {
+        "imports": {
+					"three": "./three-libs/three.module.js",
+					"three/addons/": "./three-libs/jsm/",
+					"mylib/":"./js/"
+        }
+      }
+  </script>	
+	<script type="module">
+		
+		var CFG = {
+			imgPath:"img/",
+			bgImage:"texture_bg.hdr",
+			refImage:"texture_reflect.hdr",
+			brandTitle:'scene3d-brand-title',			
+			btnLeft:'scene3d-btn-left',
+			btnRight:'scene3d-btn-right',
+			noteWin: 'scene3d-brand-note',
+			btnCloseNote:'scene3d-brand-note-close'
+		};			
+
+			import { ArtGallery } from "mylib/ArtGallery.js";			
+			
+
+			$(function() {				
+				ArtGallery.init('scene3d',CFG);
+
+			});
+						
+
+
+	</script>
+
+	
+
+</head>
+<body>
+
+<div id="scene3d-wrapper" class="noselect">
+	<div id="scene3d" >
+		<div id="scene3d-brand-title"></div>		
+		<div id="scene3d-brand-label"><svg viewBox="0 0 43 10"></svg></div> 
+	</div>
+	<div id="scene3d-brand-note">
+			<div>Используйте колесико и кнопки мышки <br>для перемещения по 3д галерее</div>
+			<div id="scene3d-brand-note-close"><span></span><span></span></div>	
+	</div>
+	<a id="scene3d-brand-about" href="#">ДНК Брендов</a>
+	<div id="scene3d-btn-right"></div>
+	<div id="scene3d-btn-left"></div>
+</div>
+
+
+</body>
+</html>
