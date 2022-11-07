@@ -18,6 +18,7 @@ var ArtGallery = {
 
     this.recalc_canvas();
 
+    this.ARR_BRANDS = opt.arrBrands;
     this.IMG_PATH = opt.imgPath;
     this.BG_IMAGE = opt.bgImage; 
     this.REFLECT_IMAGE = opt.refImage;
@@ -25,11 +26,16 @@ var ArtGallery = {
     this.btnRight = document.getElementById(opt.btnRight);
     this.noteWin = document.getElementById(opt.noteWin);
     this.btnCloseNote = document.getElementById(opt.btnCloseNote);
+    this.loader = document.getElementById(opt.loaderlayer);
 
+    
     this.PARAMS = {
       artBaseSize:20,
       autoRotateSpeed:.2
     };
+
+    
+    this.now_loading(true);
 
     this.POINTER_MOVED = false;
 
@@ -41,7 +47,7 @@ var ArtGallery = {
 
     this.preload_textures({
       onReady:()=>{
-        console.log('this.TEXTURES',this.TEXTURES)        
+        this.now_loading(false);
         this.build_scene();
         this.build_sphera_art();
         this.build_all_arts();
@@ -51,6 +57,24 @@ var ArtGallery = {
     });
   },
 
+  now_loading:function(mode) {
+    if(mode){
+      
+      this.NOW_LOADING = true;
+      this.loader.style.display = "block";
+      this.TMR_LOADER&clearTimeout(this.TMR_LOADER);
+      this.TMR_LOADER = setTimeout(()=>{
+          this.loader.classList.add("now-loading");        
+      },0);      
+    }else{
+      this.TMR_LOADER&clearTimeout(this.TMR_LOADER);      
+      this.loader.classList.remove('now-loading');
+      this.TMR_LOADER = setTimeout(()=>{
+          this.loader.style.display = "none";
+          this.NOW_LOADING = false;
+      },300);            
+    }    
+  },
   preload_textures:function(opt) {
 
 
@@ -135,51 +159,11 @@ var ArtGallery = {
     }
 
   },  
-  build_all_arts:function() {
-
-    var ARR_BRANDS = [
-        // {name:"Alexander Varlakov",colors:["#ffcc00","#aadd33","#4477ff","#0033ff","#114433","#ccddaa"]},
-        {name:"Ermolenko",colors:['#060811','#333845','#373C4C','#8B726E','#B1B8C3','#EFF2F2'],link:'https://cyber-brand.ru/collections/ermolenko-kollekcziya//#collections-menu'},
-        {name:"Zhogova",colors:['#2B477D','#2C3B6D','#304075','#324175','#A4452D','#E2E5EB'],link:'https://cyber-brand.ru/collections/zhogova//#collections-menu'},
-        {name:"Natalya Lopatkina",colors:['#11131A','#3D2E28','#918A8C','#938770','#C7A364','#E4EAF1'],link:'https://cyber-brand.ru/collections/natalya-lopatkina-kollekcziya//#collections-menu'},
-        {name:"AKULINA IRINA",colors:['#72A6DA','#8E847B','#BEB2B6','#CEB59B','#DBE3EB','#EEF1EE'],link:'https://cyber-brand.ru/collections/akulina-irina-kollekcziya//#collections-menu'},
-        // {name:"Danishine",colors:["#cc0033","#ff5566","#22aaff","#cc88ee","#ff0022","#3344ee"]},
-
-        {name:"Лесозаводский",colors:['#010204','#20283A','#CCD2DC','#DADFE9','#DBE3EB','#E9EBF2'],link:'https://cyber-brand.ru/collections/ooo-lesozavodskij-promyshlennyj-kombinat%e2%88%92-poshiv-kollekcziya/'},
-        {name:"Владивосток ",colors:['#37467E','#4A9BCF','#A6BBE1','#D4DFEA','#DADCE4','#DCE4EC'],link:'https://cyber-brand.ru/collections/shvejnaya-fabrika-vladivostok-2//#collections-menu'},
-        {name:"Хлопок",colors:['#8C4F5E','#B5CDE1','#BE9794','#CCA53E','#D5AE44','#DAB4B1'],link:'https://cyber-brand.ru/collections/hlopok-kollekcziya//#collections-menu'},
-        {name:"Design_2204",colors:['#1A191F','#2F439B','#666CC0','#762B33','#D0C9D3','#EFF2F2'],link:'https://cyber-brand.ru/collections/design_2204-kollekcziya//#collections-menu'},
-        {name:"DIA",colors:['#323533','#4C4551','#576B27','#705F6C','#827A77','#8C795A'],link:'https://cyber-brand.ru/collections/dia-kollekcziya//#collections-menu'},
-        {name:"Люди в Худи",colors:['#2E679F','#651815','#756C8A','#DBE3EB','#E1C8CF','#E35FA1'],link:'https://cyber-brand.ru/collections/lyudi-v-hudi-kollekcziya//#collections-menu'},
-
-
-        {name:"GETCLO",colors:['#8E6663','#919385','#977978','#BEC5D1','#BFBEBB','#EEF2F8'],link:'https://cyber-brand.ru/collections/letnyaya-kollekcziya-getclo//#collections-menu'},
-        {name:"GAUR",colors:['#181419','#293321','#2A252C','#76291D','#AFA7A5'],link:'https://cyber-brand.ru/collections/gaur-kollekcziya//#collections-menu'},
-        {name:"Nastas’a Fasonova",colors:['#1D201F','#1D2234','#932529','#93928E','#EAECF2','#F7F4F5'],link:'https://cyber-brand.ru/collections/nastasa-fasonova-kollekcziya//#collections-menu'},
-        // {name:"IVAN FEDOROV",colors:["#334499","#6677ee","#aabb00","#aa00bb","#00aaff","#aa44dd"]},
-        {name:"Kiwi.dress",colors:['#040406','#0A0C16','#D0BCB1','#E9EBF2','#ECEEF4','#F2F4F9'],link:'https://cyber-brand.ru/collections/kiwi-dress-kollekcziya//#collections-menu'},
-        {name:"YANVAR’",colors:['#131315','#18161C','#8C8575','#BEB5BA','#D5C4B6','#E1E6EB'],link:'https://cyber-brand.ru/collections/yanvar/#collections-menu'},  
-
-        // {name:"ЧЕРДАКFOREVER",colors:["#ffcc00","#aadd33","#4477ff","#0033ff","#114433","#ccddaa"]},
-        {name:"BEGINNING",colors:['#202020','#3A2C22','#5D6169','#5D8B8E','#909099','#9A9A9A'],link:'https://cyber-brand.ru/collections/beginning-kollekcziya/#collections-menu'},
-        // {name:"Мистер Ежик",colors:["#eeffee","#eedd44","#00ff55","#1100aa","#aaff00","#cc7777"]},
-        {name:"KUZMA",colors:['#20253D','#42343B','#5E533C','#719D75','#7F5F2C','#A28483'],link:'https://cyber-brand.ru/collections/kuzma-kollekcziya//#collections-menu'},
-        {name:"DAP’86",colors:['#1B1814','#1F1F26','#9C9BA7','#ACB1BC','#AEB3C0','#DBE669'],link:'https://cyber-brand.ru/collections/dap86-kollekcziya//#collections-menu'},
-        {name:"LOPKHAN",colors:['#100E0F','#BCA96F','#C1BCB0','#DADEE2','#E3E8EA','#EADB55'],link:'https://cyber-brand.ru/collections/lopkhan-kollekcziya//#collections-menu'},                       
-
-        {name:"Goranskaya",colors:['#0E1C2E','#131F27','#39413E','#49A0C4','#B0C3CE','#B52C31'],link:'https://cyber-brand.ru/collections/goranskaya-kollekcziya//#collections-menu'},
-        {name:"Axefeel",colors:['#1C2230','#4396E3','#71D14F','#A13855','#DFE3E9','#EF8ADE'],link:'https://cyber-brand.ru/collections/axefeel-kollekcziya//#collections-menu'},
-        {name:"SANDRA&MICHELLE",colors:['#7F5665','#801C1B','#888E9D','#9D9C8F','#BBA8B6','#BFC2C3'],link:'https://cyber-brand.ru/collections/sandramichelle-kollekcziya/'},
-        {name:"Sokolova",colors:['#15181B','#265351','#2B636A','#423F3A','#B9BFDD','#CBCAC5'],link:'https://cyber-brand.ru/collections/sokolova-kollekcziya/#collections-menu'},
-        {name:"Razuvan",colors:['#0F1318','#303030','#357984','#3F8B99','#71AEB6','#9ACDD0'],link:'https://cyber-brand.ru/collections/razuvan-kollekcziya//#collections-menu'},
-        {name:"OXA",colors:['#4C2C37','#A29FA5','#BC9BB6','#C0BEC9','#CCBEB5','#DCCABC'],link:'https://cyber-brand.ru/collections/oha-collection//#collections-menu'},       
-
-      ];    
-
+  build_all_arts:function() {    
 
     var COLUMS = 6;
-    var k = ARR_BRANDS.length%COLUMS;
-    var ROWS = (ARR_BRANDS.length-k)/COLUMS + (k?1:0); 
+    var k = this.ARR_BRANDS.length%COLUMS;
+    var ROWS = (this.ARR_BRANDS.length-k)/COLUMS + (k?1:0); 
     var ART_SIZE = 60;
     
     this.GALLERY = new THREE.Group();        
@@ -187,7 +171,7 @@ var ArtGallery = {
     for(var i=0;i<ROWS;i++){
       for(var j=0;j<COLUMS;j++){        
         var pos = j+COLUMS*i;
-        var brand = ARR_BRANDS[pos];
+        var brand = this.ARR_BRANDS[pos];
         if(!brand) break;
 
         var ART_OBJECT = this.build_art(brand.colors);
